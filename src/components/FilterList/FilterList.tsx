@@ -8,6 +8,8 @@ interface Props {
 }
 
 const FilterList: React.FC<Props> = (props) => {
+  // HomeコンポーネントのFilterTypeContextのプロパティを分割代入する
+  const { filterType, setFilterType } = useContext(FilterTypeContext);
 
   const filterTypes = [
     { value: 3, id: 'all', name: 'すべて' },
@@ -16,9 +18,15 @@ const FilterList: React.FC<Props> = (props) => {
     { value: 2, id: 'completed', name: '完了' }
   ];
 
+  //
+  const handleChangeFilterType = (e: any) => {
+    setFilterType(parseInt(e.target.value, 10));
+  }
+
   return (
     <div className="filter-area">
       <ul>
+        {/* filterTypesの分だけラジオボタンを繰り返し表示する */}
         {filterTypes.map((ft) => {
           return (
             <li key={ft.id}>
@@ -28,6 +36,10 @@ const FilterList: React.FC<Props> = (props) => {
                 name="filter"
                 id={ft.id}
                 value={ft.value}
+                //模範回答
+                onChange={handleChangeFilterType}
+                // filterTypesと一致するfilterTypeのラジオボタンにチェックする
+                checked={ft.value === filterType}
               />
             </li>
           );

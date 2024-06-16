@@ -29,6 +29,7 @@ const TodoList: React.FC<Props> = (props) => {
     return buttonClassList[todo.status];
   }
 
+  // statusNameListから値を取得する
   const getStatusName = (): string => {
     return statusNameList[todo.status];
   }
@@ -36,10 +37,11 @@ const TodoList: React.FC<Props> = (props) => {
   return (
     <div className="flex flex-row justify-center items-center">
       <div className="todo-description text-left">
-        <p>
-          { todo.title }
+        {/* todoのstatusが2であればclassName='done'を付与する */}
+        <p className={todo.status === 2 ? 'done' : ''}>
+          {todo.title}
         </p>
-        <p>{ todo.startDate } ~ { todo.endDate }</p>
+        <p>{todo.startDate} ~ {todo.endDate}</p>
       </div>
       <div className="button-area">
         <button
@@ -48,11 +50,15 @@ const TodoList: React.FC<Props> = (props) => {
         >
           詳細
         </button>
+
         <button
+          // todoのstatusに応じてbuttonClassListから値を取得し、classNameを付与する
           className={`button ${getButtonClass()}`}
+          // buttonがクリックされた際にproceedStatus()を実行する
           onClick={() => props.proceedStatus(todo.id)}
         >
-          { getStatusName() }
+          {/* statusNameListから取得した値を表示する */}
+          {getStatusName()}
         </button>
       </div>
     </div>
