@@ -1,32 +1,27 @@
-import React from 'react';
-import { createContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './Home.css';
 import FilterList from '../../components/FilterList/FilterList';
 import TodoList from '../../components/TodoList/TodoList';
 import { useNavigate } from 'react-router-dom';
 import { Todo } from '../../App';
+import useSearch from '../../hooks/useSearch';
 
 interface Props {
   proceedStatus: Function;
   todoList: Todo[];
 }
 
-export type FilterTypeContextType = {
+export const FilterTypeContext = React.createContext<{
   filterType: number;
-	setFilterType: (filterType: number) => void;
-}
-
-export const FilterTypeContext = createContext<FilterTypeContextType>({
+  setFilterType: (filterType: number) => void;
+}>({
   filterType: 0,
-  setFilterType: (filterType) => {}
+  setFilterType: () => { },
 });
 
-const Home: React.FC<Props> = (props) => {
+const Home: React.FC<Props> = ({ proceedStatus, todoList }) => {
   const navigate = useNavigate();
-
-  const todoList = props.todoList;
-  const filter = 3;
-
+  const { query, handleSearchTodo, filteredTodoList } = useSearch(todoList);
   const [filterType, setFilterType] = useState<number>(3);
 
   return (
@@ -36,31 +31,39 @@ const Home: React.FC<Props> = (props) => {
       </div>
       <div className="main-area">
         <FilterTypeContext.Provider value={{ filterType, setFilterType }}>
-          <FilterList filter={filter}></FilterList>
+          <FilterList filter={filterType} />
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="todo検索"
+              value={query}
+              onChange={handleSearchTodo}
+              className="search-input"
+            />
+          </div>
+          <div className="control-area">
+            <div></div>
+            <button
+              onClick={() => navigate('add')}
+              className="add-button primary"
+            >
+              新規登録
+            </button>
+          </div>
           <div className="flex justify-center">
             <ul className="todo-list">
-              <li>
-                <button
-                  onClick={() => navigate('add')}
-                  className="add-button primary"
-                >
-                  新規登録
-                </button>
-              </li>
-              {(() => {
-                if (todoList.length <= 0) {
-                  return <li>登録されている予定はありません。</li>;
-                } else {
-                  return todoList
-                    .filter(todo => filterType === 3 ? true : todo.status === filterType)
-                    .sort((a, b) => a.startDate > b.startDate ? 1 : -1)
-                    .map((todo) =>
+              {filteredTodoList.length <= 0 ? (
+                <li>登録されている予定はありません。</li>
+              ) : (
+                filteredTodoList
+                  .filter(todo => (filterType === 3 ? true : todo.status === filterType))
+                  .sort((a, b) => (a.startDate > b.startDate ? 1 : -1))
+                  .map(todo => (
                     <li key={todo.id}>
-                      <TodoList proceedStatus={props.proceedStatus} todo={todo}></TodoList>
+                      <TodoList proceedStatus={proceedStatus} todo={todo} />
                     </li>
-                  )
-                }
-              })()}
+                  ))
+              )}
             </ul>
           </div>
         </FilterTypeContext.Provider>

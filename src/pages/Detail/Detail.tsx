@@ -1,5 +1,4 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
 import './Detail.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Todo } from '../../App';
@@ -7,59 +6,61 @@ import { Todo } from '../../App';
 interface Props {
   todoList: Todo[];
   editTodo: (todo: Todo) => void;
-  deleteTodo: (todo: Todo) => void;
+  logicalDeleteTodo: (todo: Todo) => void;
 }
 
 const Detail: React.FC<Props> = (props) => {
   const { todoId } = useParams()
   const navigate = useNavigate();
 
-  const [currentTodo, setCurrentTodo] = useState<Todo | null>(null);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  type TodoField = 'title' | 'description' | 'startDate' | 'endDate';
 
-  useEffect(() => {
-    if (!todoId) {
-      navigate('/');
-      return;
-    }
-
-    const todo = props.todoList.find(t => t.id === parseInt(todoId, 10));
-
-    if (!todo) {
-      navigate('/');
-      return;
-    }
-
-    setCurrentTodo(todo);
-    setTitle(todo.title);
-    setDescription(todo.description);
-    setStartDate(todo.startDate);
-    setEndDate(todo.endDate);
-  }, [todoId, navigate]);
-
-  const editTodo = (): void => {
-    if (!currentTodo) return;
-
-    const newTodo = {
-      id: currentTodo.id,
-      status: currentTodo.status,
-      title,
-      description,
-      startDate,
-      endDate,
-    }
-    props.editTodo(newTodo);
+  if (!todoId) {
     navigate('/');
+    return (<></>);
   }
 
-  const deleteTodo = (): void => {
-    if (!currentTodo) return;
-    props.deleteTodo(currentTodo);
+  const todo = props.todoList.find(t => t.id === parseInt(todoId, 10));
+
+  if (todo === undefined) {
     navigate('/');
-    return;
+    return (<></>);
+  }
+
+  const handleChange = <T extends HTMLInputElement | HTMLTextAreaElement>(
+    field: TodoField,
+  ) => (e: React.ChangeEvent<T>) => {
+    const target = e.target as T;
+    todo[field] = target.value;
+  };
+
+  const handleChangeTitle = handleChange<HTMLInputElement>('title');
+  const handleChangeDescription = handleChange<HTMLTextAreaElement>('description');
+  const handleChangeStartDate = handleChange<HTMLInputElement>('startDate');
+  const handleChangeEndDate = handleChange<HTMLInputElement>('endDate');
+
+  // const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   todo.title = e.target.value;
+  // };
+  // const handleChangeDescription = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  //   todo.description = e.target.value;
+  // };
+  // const handleChangeStartDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   todo.startDate = e.target.value;
+  // };
+  // const handleChangeEndDate = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   todo.endDate = e.target.value;
+  // };
+
+  const handleEditTodo = (e: React.FormEvent) => {
+    e.preventDefault();
+    props.editTodo(todo);
+    navigate('/');
+  }
+  const handleLogicalDeleteTodo = (e: React.FormEvent) => {
+    e.preventDefault();
+    props.logicalDeleteTodo(todo);
+    navigate('/');
   }
 
   return (
@@ -73,39 +74,34 @@ const Detail: React.FC<Props> = (props) => {
             className="input-text"
             placeholder="タイトル"
             type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            defaultValue={todo.title}
+            onChange={handleChangeTitle}
           />
         </div>
         <div className="my-5">
           <textarea
             className="input-textarea"
             placeholder="内容"
+            defaultValue={todo.description}
+            name=""
+            id=""
             cols={30}
             rows={10}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={handleChangeDescription}
           ></textarea>
         </div>
         <div className="flex justify-between my-5 width-full">
-          <input
-            className="input-date"
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
+          <input className="input-date" defaultValue={todo.startDate} type="date" onChange={handleChangeStartDate} />
           <p>~</p>
-          <input
-            className="input-date"
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          />
+          <input className="input-date" defaultValue={todo.endDate} type="date" onChange={handleChangeEndDate} />
         </div>
-
         <div className="flex flex-row gap-16">
-          <button className="edit-button positive" onClick={editTodo}>更新</button>
-          <button className="delete-button critical" onClick={deleteTodo}>削除</button>
+          <form onSubmit={handleEditTodo}>
+            <button className="edit-button positive">更新</button>
+          </form>
+          <form onSubmit={handleLogicalDeleteTodo}>
+            <button className="delete-button critical">削除</button>
+          </form>
         </div>
       </div>
     </div>
