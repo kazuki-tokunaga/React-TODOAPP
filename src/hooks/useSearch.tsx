@@ -1,7 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEventHandler } from 'react';
 import { Todo } from '../App';
 
-const useSearch = (todoList: Todo[]) => {
+type UseSearch = {
+  query: string;
+  filteredTodoList: Todo[];
+  handleSearchTodo: ChangeEventHandler<HTMLInputElement>;
+}
+
+const useSearch = (todoList: Todo[]): UseSearch => {
   const [query, setQuery] = useState<string>('');
   const [filteredTodoList, setFilteredTodoList] = useState<Todo[]>(todoList);
 
@@ -11,11 +17,14 @@ const useSearch = (todoList: Todo[]) => {
         todo.title.toLowerCase().includes(query.toLowerCase())
       )
     );
-  }, [query, todoList]);
+  }, [query]);
 
   const handleSearchTodo = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
   };
+
+  // console.log(`query:${query}`);
+  // console.log(`handleSearchTodo:${typeof handleSearchTodo}`);
 
   return { query, handleSearchTodo, filteredTodoList };
 };
