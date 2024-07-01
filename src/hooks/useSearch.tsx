@@ -1,5 +1,5 @@
 import { useState, useEffect, ChangeEventHandler } from 'react';
-import { Todo } from '../App';
+import { type Todo } from '../contexts/TodoContext';
 
 type UseSearch = {
   query: string;
@@ -22,9 +22,6 @@ const useSearch = (todoList: Todo[]): UseSearch => {
   const handleSearchTodo = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
   };
-
-  // console.log(`query:${query}`);
-  // console.log(`handleSearchTodo:${typeof handleSearchTodo}`);
 
   return { query, handleSearchTodo, filteredTodoList };
 };

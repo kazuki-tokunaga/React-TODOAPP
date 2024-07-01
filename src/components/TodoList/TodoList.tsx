@@ -1,15 +1,15 @@
 import React from 'react';
 import './TodoList.css';
 import { useNavigate } from 'react-router-dom';
-import { Todo } from '../../App';
+import { useTodoContext, type Todo } from '../../contexts/TodoContext';
 
 interface Props {
-  proceedStatus: Function;
   todo: Todo;
 }
 
 const TodoList: React.FC<Props> = (props) => {
   const navigate = useNavigate();
+  const { proceedStatus } = useTodoContext();
 
   const statusNameList: { [key: number]: string } = {
     0: '未着手',
@@ -36,7 +36,6 @@ const TodoList: React.FC<Props> = (props) => {
   return (
     <div className="flex flex-row justify-center items-center">
       <div className="todo-description text-left">
-        {/* todoのstatusが2であればclassName='done'を付与する */}
         <p className={todo.status === 2 ? 'done' : ''}>
           {todo.title}
         </p>
@@ -52,7 +51,7 @@ const TodoList: React.FC<Props> = (props) => {
 
         <button
           className={`button ${getButtonClass()}`}
-          onClick={() => props.proceedStatus(todo.id)}
+          onClick={() => proceedStatus(todo.id)}
         >
           {getStatusName()}
         </button>

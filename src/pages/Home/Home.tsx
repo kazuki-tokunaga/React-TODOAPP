@@ -3,13 +3,8 @@ import './Home.css';
 import FilterList from '../../components/FilterList/FilterList';
 import TodoList from '../../components/TodoList/TodoList';
 import { useNavigate } from 'react-router-dom';
-import { Todo } from '../../App';
 import useSearch from '../../hooks/useSearch';
-
-interface Props {
-  proceedStatus: Function;
-  todoList: Todo[];
-}
+import { useTodoContext } from '../../contexts/TodoContext';
 
 export const FilterTypeContext = React.createContext<{
   filterType: number;
@@ -19,10 +14,12 @@ export const FilterTypeContext = React.createContext<{
   setFilterType: () => { },
 });
 
-const Home: React.FC<Props> = ({ proceedStatus, todoList }) => {
+const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { todoList, } = useTodoContext();
   const { query, handleSearchTodo, filteredTodoList } = useSearch(todoList);
   const [filterType, setFilterType] = useState<number>(3);
+  const visibleTodoList = filteredTodoList.filter(todo => !todo.logicalDeleted);
 
   return (
     <div>
@@ -52,15 +49,15 @@ const Home: React.FC<Props> = ({ proceedStatus, todoList }) => {
           </div>
           <div className="flex justify-center">
             <ul className="todo-list">
-              {filteredTodoList.length <= 0 ? (
+              {visibleTodoList.length <= 0 ? (
                 <li>登録されている予定はありません。</li>
               ) : (
-                filteredTodoList
+                visibleTodoList
                   .filter(todo => (filterType === 3 ? true : todo.status === filterType))
                   .sort((a, b) => (a.startDate > b.startDate ? 1 : -1))
                   .map(todo => (
                     <li key={todo.id}>
-                      <TodoList proceedStatus={proceedStatus} todo={todo} />
+                      <TodoList todo={todo} />
                     </li>
                   ))
               )}

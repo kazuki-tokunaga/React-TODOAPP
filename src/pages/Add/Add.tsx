@@ -1,14 +1,11 @@
 import React from 'react';
 import './Add.css';
 import { useNavigate } from 'react-router-dom';
-import { Todo } from '../../App';
+import { useTodoContext, type Todo } from '../../contexts/TodoContext';
 
-interface Props {
-  addTodo: (todo: Todo) => void;
-}
-
-const Add: React.FC<Props> = (props) => {
+const Add: React.FC = () => {
   const navigate = useNavigate();
+  type TodoField = 'title' | 'description' | 'startDate' | 'endDate';
 
   const newTodo: Todo = {
     id: new Date().getTime(),
@@ -17,10 +14,8 @@ const Add: React.FC<Props> = (props) => {
     description: '',
     startDate: '',
     endDate: '',
-    logicalDeleted: false,
+    logicalDeleted: false
   };
-
-  type TodoField = 'title' | 'description' | 'startDate' | 'endDate';
 
   const handleChange = <T extends HTMLInputElement | HTMLTextAreaElement>(
     field: TodoField,
@@ -29,29 +24,13 @@ const Add: React.FC<Props> = (props) => {
     newTodo[field] = target.value;
   };
 
-  const handleChangeTitle = handleChange<HTMLInputElement>('title');
-  const handleChangeDescription = handleChange<HTMLTextAreaElement>('description');
-  const handleChangeStartDate = handleChange<HTMLInputElement>('startDate');
-  const handleChangeEndDate = handleChange<HTMLInputElement>('endDate');
-
-  // const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   newTodo.title = e.target.value;
-  // };
-  // const handleChangeDescription = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //   newTodo.description = e.target.value;
-  // };
-  // const handleChangeStartDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   newTodo.startDate = e.target.value;
-  // };
-  // const handleChangeEndDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   newTodo.endDate = e.target.value;
-  // };
+  const { addTodo } = useTodoContext();
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
-    props.addTodo(newTodo);
+    addTodo(newTodo);
     navigate('/');
-  }
+  };
 
   return (
     <form onSubmit={handleAddTodo}>
@@ -65,7 +44,7 @@ const Add: React.FC<Props> = (props) => {
               className="input-text"
               placeholder="タイトル"
               type="text"
-              onChange={handleChangeTitle}
+              onChange={handleChange('title')}
             />
           </div>
           <div className="my-5">
@@ -76,13 +55,13 @@ const Add: React.FC<Props> = (props) => {
               id=""
               cols={30}
               rows={10}
-              onChange={handleChangeDescription}
+              onChange={handleChange('description')}
             ></textarea>
           </div>
           <div className="flex justify-between my-5 width-full">
-            <input className="input-date" type="date" onChange={handleChangeStartDate} />
+            <input className="input-date" type="date" onChange={handleChange('startDate')} />
             <p>~</p>
-            <input className="input-date" type="date" onChange={handleChangeEndDate} />
+            <input className="input-date" type="date" onChange={handleChange('endDate')} />
           </div>
           <button className="add-button primary" type="submit">登録</button>
         </div>
