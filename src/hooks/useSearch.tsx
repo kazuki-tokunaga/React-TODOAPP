@@ -1,5 +1,6 @@
 import { useState, useEffect, ChangeEventHandler } from 'react';
-import { type Todo } from '../contexts/TodoContext';
+import { useTodoList, type Todo } from '../hooks/useTodoList';
+// import { type Todo } from '../contexts/TodoContext';
 
 type UseSearch = {
   query: string;

@@ -1,7 +1,8 @@
 import React from 'react';
 import './Add.css';
 import { useNavigate } from 'react-router-dom';
-import { useTodoContext, type Todo } from '../../contexts/TodoContext';
+import { useTodoList, type Todo } from '../../hooks/useTodoList';
+// import { useTodoContext, type Todo } from '../../contexts/TodoContext';
 
 const Add: React.FC = () => {
   const navigate = useNavigate();
@@ -24,7 +25,9 @@ const Add: React.FC = () => {
     newTodo[field] = target.value;
   };
 
-  const { addTodo } = useTodoContext();
+  const { addTodo } = useTodoList();
+
+  // const { addTodo } = useTodoContext();
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import './Detail.css';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useTodoContext } from '../../contexts/TodoContext';
+import { useTodoList, type Todo } from '../../hooks/useTodoList';
+// import { useTodoContext } from '../../contexts/TodoContext';
 
 const Detail: React.FC = () => {
   const { todoId } = useParams();
   const navigate = useNavigate();
-  const { todoList, editTodo, logicalDeleteTodo } = useTodoContext();
+  const { todoList, editTodo, logicalDeleteTodo } = useTodoList();
 
   type TodoField = 'title' | 'description' | 'startDate' | 'endDate';
 
