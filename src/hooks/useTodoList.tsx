@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 export type Todo = {
 	readonly id: number;
@@ -10,14 +12,36 @@ export type Todo = {
 	logicalDeleted: boolean;
 }
 
-
 export const useTodoList = () => {
+	type TodoField = 'title' | 'description' | 'startDate' | 'endDate';
+	const navigate = useNavigate();
 	const [todoList, setTodoList] = useState<Todo[]>([]);
+	const newTodo = {
+		id: new Date().getTime(),
+		status: 0,
+		title: '',
+		description: '',
+		startDate: '',
+		endDate: '',
+		logicalDeleted: false,
+	};
 
-	const addTodo = (todo: Todo): void => {
-		const newTodo: Todo = { ...todo, id: new Date().getTime() };
-		setTodoList((prevTodoList: Todo[]) => [...prevTodoList, newTodo]);
-		console.log('登録しました');
+	const handleChange = <T extends HTMLInputElement | HTMLTextAreaElement>(
+		field: TodoField,
+	) => (e: React.ChangeEvent<T>) => {
+		console.log('field:', field);
+		const target = e.target as T;
+		console.log('target:', target);
+		newTodo[field] = target.value;
+		console.log('handleChange:', newTodo);
+	};
+
+	const handleAddTodo = (e: React.FormEvent) => {
+		e.preventDefault();
+		setTodoList([...todoList, newTodo]);
+		console.log('newTodo:', newTodo);
+		console.log('handleAddTodo:', todoList);
+		navigate('/');
 	};
 
 	const editTodo = (todo: Todo): void => {
@@ -42,7 +66,7 @@ export const useTodoList = () => {
 		);
 	};
 
-	return { todoList, addTodo, editTodo, proceedStatus, logicalDeleteTodo };
+	return { todoList, editTodo, proceedStatus, logicalDeleteTodo, handleChange, handleAddTodo };
 };
 
 export default useTodoList;
