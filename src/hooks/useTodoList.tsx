@@ -29,18 +29,28 @@ export const useTodoList = () => {
 	const handleChange = <T extends HTMLInputElement | HTMLTextAreaElement>(
 		field: TodoField,
 	) => (e: React.ChangeEvent<T>) => {
-		console.log('field:', field);
 		const target = e.target as T;
-		console.log('target:', target);
 		newTodo[field] = target.value;
-		console.log('handleChange:', newTodo);
 	};
+
+	// レンダリング後のログ確認用
+	useEffect(() => {
+		console.log('todoList updated:', todoList);
+	}, [todoList]);
 
 	const handleAddTodo = (e: React.FormEvent) => {
 		e.preventDefault();
+
 		setTodoList([...todoList, newTodo]);
 		console.log('newTodo:', newTodo);
-		console.log('handleAddTodo:', todoList);
+
+		// 更新後シミュレーション
+		const nextTodoList = ([...todoList, newTodo]);
+		console.log('nextTodoList:', nextTodoList);
+
+		// //set 関数の呼び出しは、実行中のコードの state を変化させません。
+		// console.log('handleAddTodo:', todoList);
+
 		navigate('/');
 	};
 
