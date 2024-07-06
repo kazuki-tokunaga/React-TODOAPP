@@ -1,9 +1,9 @@
 import React from 'react';
 import './Add.css';
-import { useTodoList, type Todo } from '../../hooks/useTodoList';
+import { useList, type Todo } from '../../hooks/useList';
 
 const Add: React.FC = () => {
-  const { handleAddTodo, handleChange } = useTodoList();
+  const { handleAddTodo, handleChangeTodo } = useList();
 
   return (
     <div className="flex justify-center flex-column">
@@ -16,7 +16,7 @@ const Add: React.FC = () => {
             className="input-text"
             placeholder="タイトル"
             type="text"
-            onChange={handleChange('title')}
+            onChange={handleChangeTodo('title')}
           />
         </div>
         <div className="my-5">
@@ -27,13 +27,13 @@ const Add: React.FC = () => {
             id=""
             cols={30}
             rows={10}
-            onChange={handleChange('description')}
+            onChange={handleChangeTodo('description')}
           ></textarea>
         </div>
         <div className="flex justify-between my-5 width-full">
-          <input className="input-date" type="date" onChange={handleChange('startDate')} />
+          <input className="input-date" type="date" onChange={handleChangeTodo('startDate')} />
           <p>~</p>
-          <input className="input-date" type="date" onChange={handleChange('endDate')} />
+          <input className="input-date" type="date" onChange={handleChangeTodo('endDate')} />
         </div>
         <button onClick={handleAddTodo} className="add-button primary" type="submit">登録</button>
       </div>

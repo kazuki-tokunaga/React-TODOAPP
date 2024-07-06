@@ -1,7 +1,7 @@
 import React from 'react';
 import './TodoList.css';
 import { useNavigate } from 'react-router-dom';
-import { useTodoList, type Todo } from '../../hooks/useTodoList';
+import { useList, type Todo } from '../../hooks/useList';
 // import { useTodoContext, type Todo } from '../../contexts/TodoContext';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 
 const TodoList: React.FC<Props> = (props) => {
   const navigate = useNavigate();
-  const { proceedStatus } = useTodoList();
+  const { proceedStatus } = useList();
 
   const statusNameList: { [key: number]: string } = {
     0: '未着手',

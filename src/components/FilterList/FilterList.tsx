@@ -1,14 +1,14 @@
 import React from 'react';
 import { useContext } from "react";
-import { FilterTypeContext } from '../../pages/Home/Home';
-import './FilterList.css';
+// import { FilterTypeContext } from '../../pages/Home/Home';
+// import './FilterList.css';
 
 interface Props {
   filter: number;
 }
 
 const FilterList: React.FC<Props> = () => {
-  const { filterType, setFilterType } = useContext(FilterTypeContext);
+  // const { filterType, setFilterType } = useContext(FilterTypeContext);
 
   const filterTypes = [
     { value: 3, id: 'all', name: 'すべて' },
@@ -17,9 +17,9 @@ const FilterList: React.FC<Props> = () => {
     { value: 2, id: 'completed', name: '完了' }
   ];
 
-  const handleChangeFilterType = (e: any) => {
-    setFilterType(parseInt(e.target.value, 10));
-  }
+  // const handleChangeFilterType = (e: any) => {
+  //   setFilterType(parseInt(e.target.value, 10));
+  // }
 
   return (
     <div className="filter-area">
@@ -27,7 +27,7 @@ const FilterList: React.FC<Props> = () => {
         {filterTypes.map((ft) => {
           return (
             <li key={ft.id}>
-              <label htmlFor={ft.id}>{ft.name}</label>
+              {/* <label htmlFor={ft.id}>{ft.name}</label>
               <input
                 type="radio"
                 name="filter"
@@ -35,7 +35,7 @@ const FilterList: React.FC<Props> = () => {
                 value={ft.value}
                 onChange={handleChangeFilterType}
                 checked={ft.value === filterType}
-              />
+              /> */}
             </li>
           );
         })}

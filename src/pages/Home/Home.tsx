@@ -4,7 +4,7 @@ import FilterList from '../../components/FilterList/FilterList';
 import TodoList from '../../components/TodoList/TodoList';
 import { useNavigate } from 'react-router-dom';
 import useSearch from '../../hooks/useSearch';
-import { useTodoList, type Todo } from '../../hooks/useTodoList';
+import { useList, type Todo } from '../../hooks/useList';
 // import { useTodoContext } from '../../contexts/TodoContext';
 
 export const FilterTypeContext = React.createContext<{
@@ -17,7 +17,7 @@ export const FilterTypeContext = React.createContext<{
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { todoList } = useTodoList();
+  const { todoList } = useList();
   const { query, handleSearchTodo, filteredTodoList } = useSearch(todoList);
   const [filterType, setFilterType] = useState<number>(3);
   const visibleTodoList = filteredTodoList.filter(todo => !todo.logicalDeleted);

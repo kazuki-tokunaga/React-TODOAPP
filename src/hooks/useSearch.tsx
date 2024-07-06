@@ -1,5 +1,5 @@
 import { useState, useEffect, ChangeEventHandler } from 'react';
-import { useTodoList, type Todo } from '../hooks/useTodoList';
+import { useList, type Todo } from './useList';
 // import { type Todo } from '../contexts/TodoContext';
 
 type UseSearch = {
