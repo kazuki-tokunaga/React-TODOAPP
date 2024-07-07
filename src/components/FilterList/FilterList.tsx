@@ -1,7 +1,5 @@
 import React from 'react';
-import { useContext } from "react";
-// import { FilterTypeContext } from '../../pages/Home/Home';
-// import './FilterList.css';
+import './FilterList.css';
 
 interface Props {
   filter: number;

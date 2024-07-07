@@ -1,23 +1,33 @@
 import './App.css';
+import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Home from './pages/Home/Home';
 import Add from './pages/Add/Add';
 import Detail from './pages/Detail/Detail';
-// import { TodoProvider } from './contexts/TodoContext';
+
+export type Todo = {
+  readonly id: number;
+  status: number;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  logicalDeleted: boolean;
+};
 
 function App() {
+  const [todoList, setTodoList] = useState<Todo[]>([]);
+
   return (
-    // <TodoProvider>
     <div className="App">
       <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/add" element={<Add />} />
-        <Route path="/detail/:todoId" element={<Detail />} />
+        <Route path="/" element={<Home todoList={todoList} />} />
+        <Route path="/add" element={<Add todoList={todoList} setTodoList={setTodoList} />} />
+        <Route path="/detail/:todoId" element={<Detail todoList={todoList} setTodoList={setTodoList} />} />
       </Routes>
     </div>
-    // </TodoProvider>
   );
 }
 

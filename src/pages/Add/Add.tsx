@@ -1,9 +1,14 @@
 import React from 'react';
 import './Add.css';
-import { useList, type Todo } from '../../hooks/useList';
+import { useController, type Todo } from '../../hooks/useController';
 
-const Add: React.FC = () => {
-  const { handleAddTodo, handleChangeTodo } = useList();
+type AddProps = {
+  todoList: Todo[];
+  setTodoList: React.Dispatch<React.SetStateAction<Todo[]>>;
+}
+
+const Add = (props: AddProps) => {
+  const { handleAddTodo, handleChangeTodo } = useController(props.todoList, props.setTodoList);
 
   return (
     <div className="flex justify-center flex-column">

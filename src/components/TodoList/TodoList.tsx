@@ -1,7 +1,7 @@
 import React from 'react';
 import './TodoList.css';
 import { useNavigate } from 'react-router-dom';
-import { useList, type Todo } from '../../hooks/useList';
+import { useController, type Todo } from '../../hooks/useController';
 // import { useTodoContext, type Todo } from '../../contexts/TodoContext';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 
 const TodoList: React.FC<Props> = (props) => {
   const navigate = useNavigate();
-  const { proceedStatus } = useList();
+  // const { proceedStatus } = useList();
 
   const statusNameList: { [key: number]: string } = {
     0: '未着手',
@@ -50,12 +50,12 @@ const TodoList: React.FC<Props> = (props) => {
           詳細
         </button>
 
-        <button
+        {/* <button
           className={`button ${getButtonClass()}`}
           onClick={() => proceedStatus(todo.id)}
         >
           {getStatusName()}
-        </button>
+        </button> */}
       </div>
     </div>
   );
