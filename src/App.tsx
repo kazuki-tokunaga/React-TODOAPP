@@ -2,9 +2,12 @@ import './App.css';
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
-import Home from './pages/Home/Home';
-import Add from './pages/Add/Add';
-import Detail from './pages/Detail/Detail';
+import TodoHome from './pages/Todo/HomeTodo/HomeTodo';
+import UserHome from './pages/User/HomeUser/HomeUser';
+import AddTodo from './pages/Todo/AddTodo/AddTodo';
+import AddUser from './pages/User/AddUser/AddUser';
+import TodoDetail from './pages/Todo/DetailTodo/DetailTodo';
+import UserDetail from './pages/User/DetailUser/DetailUser';
 
 export type Todo = {
   readonly id: number;
@@ -16,16 +19,27 @@ export type Todo = {
   logicalDeleted: boolean;
 };
 
+export type User = {
+  readonly id: number;
+  name: string;
+  email: string;
+  logicalDeleted: boolean;
+};
+
 function App() {
   const [todoList, setTodoList] = useState<Todo[]>([]);
+  const [userList, setUserList] = useState<User[]>([]);
 
   return (
     <div className="App">
       <Header />
       <Routes>
-        <Route path="/" element={<Home todoList={todoList} />} />
-        <Route path="/add" element={<Add todoList={todoList} setTodoList={setTodoList} />} />
-        <Route path="/detail/:todoId" element={<Detail todoList={todoList} setTodoList={setTodoList} />} />
+        <Route path="/todo" element={<TodoHome todoList={todoList} />} />
+        <Route path="/todo/add" element={<AddTodo todoList={todoList} setTodoList={setTodoList} />} />
+        <Route path="/todo/detail/:todoId" element={<TodoDetail todoList={todoList} setTodoList={setTodoList} />} />
+        <Route path="/user" element={<UserHome userList={userList} />} />
+        <Route path="/user/add" element={<AddUser userList={userList} setUserList={setUserList} />} />
+        <Route path="/user/detail/:userId" element={<UserDetail userList={userList} setUserList={setUserList} />} />
       </Routes>
     </div>
   );

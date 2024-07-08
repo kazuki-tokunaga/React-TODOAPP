@@ -1,30 +1,50 @@
 import { useState, useEffect, ChangeEventHandler } from 'react';
-import { useController, type Todo } from './useController';
-// import { type Todo } from '../contexts/TodoContext';
 
-type UseSearch = {
+export type Todo = {
+  readonly id: number;
+  status: number;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  logicalDeleted: boolean;
+};
+
+export type User = {
+  readonly id: number;
+  name: string;
+  email: string;
+  logicalDeleted: boolean;
+};
+
+// ユニオン型
+export type Searchable = Todo | User;
+
+type UseSearch<T extends Searchable> = {
   query: string;
-  filteredTodoList: Todo[];
-  handleSearchTodo: ChangeEventHandler<HTMLInputElement>;
+  filteredList: T[];
+  handleSearch: ChangeEventHandler<HTMLInputElement>;
 }
 
-const useSearch = (todoList: Todo[]): UseSearch => {
+// ジェネリック型の制約
+const useSearch = <T extends Searchable>(list: T[]): UseSearch<T> => {
   const [query, setQuery] = useState<string>('');
-  const [filteredTodoList, setFilteredTodoList] = useState<Todo[]>(todoList);
+  const [filteredList, setFilteredList] = useState<T[]>(list);
 
   useEffect(() => {
-    setFilteredTodoList(
-      todoList.filter(todo =>
-        todo.title.toLowerCase().includes(query.toLowerCase())
+    setFilteredList(
+      list.filter(item =>
+        ('title' in item && item.title.toLowerCase().includes(query.toLowerCase())) ||
+        ('name' in item && item.name.toLowerCase().includes(query.toLowerCase()))
       )
     );
-  }, [query]);
+  }, [query, list]);
 
-  const handleSearchTodo = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
   };
 
-  return { query, handleSearchTodo, filteredTodoList };
+  return { query, handleSearch, filteredList };
 };
 
 export default useSearch;

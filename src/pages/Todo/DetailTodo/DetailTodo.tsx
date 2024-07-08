@@ -1,19 +1,17 @@
 import React, { useEffect } from 'react';
-import './Detail.css';
+import './DetailTodo.css';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useController, type Todo } from '../../hooks/useController';
+import { useController, type Todo } from '../../../hooks/useController';
 
-type DetailProps = {
+type TodoAddProps = {
 	todoList: Todo[];
 	setTodoList: React.Dispatch<React.SetStateAction<Todo[]>>;
 }
 
-const Detail = (props: DetailProps) => {
-	const { todoId } = useParams();
+const DetailTodo: React.FC<TodoAddProps> = ({ todoList, setTodoList }) => {
+	const { todoId } = useParams<{ todoId: string }>();
 	const navigate = useNavigate();
-	const { handleEditTodo, handleLogicalDeleteTodo } = useController(props.todoList, props.setTodoList);
-
-	type TodoField = 'title' | 'description' | 'startDate' | 'endDate';
+	const { handleChange, handleEdit, handleLogicalDelete } = useController<Todo>(todoList, setTodoList, 'todo', todoId);
 
 	useEffect(() => {
 		if (!todoId) {
@@ -21,7 +19,7 @@ const Detail = (props: DetailProps) => {
 		}
 	}, [todoId, navigate]);
 
-	const todo = props.todoList.find(t => t.id === parseInt(todoId!, 10));
+	const todo = todoList.find(t => t.id === parseInt(todoId!, 10));
 
 	useEffect(() => {
 		if (todo === undefined) {
@@ -32,19 +30,6 @@ const Detail = (props: DetailProps) => {
 	if (todo === undefined) {
 		return null;
 	}
-
-	const handleChange = <T extends HTMLInputElement | HTMLTextAreaElement>(
-		field: TodoField,
-	) => (e: React.ChangeEvent<T>) => {
-		const target = e.target as T;
-		todo[field] = target.value;
-	};
-
-	// const handleLogicalDeleteTodo = (e: React.FormEvent) => {
-	//   e.preventDefault();
-	//   logicalDeleteTodo(todo);
-	//   navigate('/');
-	// };
 
 	return (
 		<div className="flex justify-center flex-column">
@@ -79,12 +64,12 @@ const Detail = (props: DetailProps) => {
 					<input className="input-date" defaultValue={todo.endDate} type="date" onChange={handleChange('endDate')} />
 				</div>
 				<div className="flex flex-row gap-16">
-					<button onClick={handleEditTodo} className="edit-button positive">更新</button>
-					<button onClick={handleLogicalDeleteTodo} className="delete-button critical">削除</button>
+					<button onClick={handleEdit} className="edit-button positive">更新</button>
+					<button onClick={handleLogicalDelete} className="delete-button critical">削除</button>
 				</div>
 			</div>
 		</div>
 	);
 };
 
-export default Detail;
+export default DetailTodo;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEventHandler, MouseEventHandler } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 export type Todo = {
@@ -11,97 +11,95 @@ export type Todo = {
 	logicalDeleted: boolean;
 };
 
-export const useController = (todoList: Todo[], setTodoList: React.Dispatch<React.SetStateAction<Todo[]>>) => {
-	type TodoField = 'title' | 'description' | 'startDate' | 'endDate';
-	const navigate = useNavigate();
-	const { todoId } = useParams<{ todoId: string }>();
+export type User = {
+	readonly id: number;
+	name: string;
+	email: string;
+	logicalDeleted: boolean;
+};
 
-	const [newTodo, setNewTodo] = useState<Todo>({
-		id: new Date().getTime(),
-		status: 0,
-		title: '',
-		description: '',
-		startDate: '',
-		endDate: '',
-		logicalDeleted: false,
-	});
+// ユニオン型
+export type Controllable = Todo | User;
+
+type UseController<T extends Controllable> = {
+	handleChange: (field: keyof T) => ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+	handleAdd: MouseEventHandler<HTMLButtonElement>;
+	handleEdit: MouseEventHandler<HTMLButtonElement>;
+	handleLogicalDelete: MouseEventHandler<HTMLButtonElement>;
+};
+
+// ジェネリック型の制約
+export const useController = <T extends Controllable>(
+	list: T[],
+	setList: React.Dispatch<React.SetStateAction<T[]>>,
+	type: 'todo' | 'user',
+	itemId?: string
+): UseController<T> => {
+	const navigate = useNavigate();
+	const { id } = useParams<{ id: string }>();
+
+	const [newItem, setNewItem] = useState<Partial<T>>({});
 
 	useEffect(() => {
-		if (todoId) {
-			const todo = todoList.find(t => t.id === parseInt(todoId, 10));
-			if (todo) {
-				setNewTodo(todo);
+		const currentId = itemId ?? id;
+		if (currentId) {
+			const item = list.find(t => t.id === parseInt(currentId, 10));
+			if (item) {
+				setNewItem(item);
 			}
 		}
-		console.log('todoList', todoList);
-	}, [todoId, todoList]);
+	}, [itemId, id, list]);
 
 	// チェンジイベント
-	const handleChangeTodo = <T extends HTMLInputElement | HTMLTextAreaElement>(
-		field: TodoField,
-	) => (e: React.ChangeEvent<T>) => {
-		const value = e.target.value;
-		setNewTodo((prevNewTodo) => ({
-			...prevNewTodo,
+	const handleChange = (field: keyof T): ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> => (e) => {
+		const { value } = e.target;
+		setNewItem((prevNewItem) => ({
+			...prevNewItem,
 			[field]: value,
 		}));
 	};
 
 	// 登録処理
-	const handleAddTodo = (e: React.FormEvent) => {
+	const handleAdd: MouseEventHandler<HTMLButtonElement> = (e) => {
 		e.preventDefault();
-		setTodoList([...todoList, newTodo]);
-		setNewTodo({
-			id: new Date().getTime(),
-			status: 0,
-			title: '',
-			description: '',
-			startDate: '',
-			endDate: '',
-			logicalDeleted: false,
-		});
-		navigate("/");
+		const itemWithId = { ...newItem, id: new Date().getTime() } as T;
+		setList((prevList) => [...prevList, itemWithId]);
+		setNewItem({});
+		navigate(`/${type}`);
 	};
 
 	// 更新処理
-	const handleEditTodo = (e: React.FormEvent): void => {
+	const handleEdit: MouseEventHandler<HTMLButtonElement> = (e) => {
 		e.preventDefault();
-		if (!todoId) return;
+		const currentId = itemId ?? id;
+		if (!currentId) return;
 
-		setTodoList((prevTodoList) =>
-			prevTodoList.map(todo =>
-				todo.id === parseInt(todoId, 10) ? { ...todo, ...newTodo } : todo
+		setList((prevList) =>
+			prevList.map(item =>
+				item.id === parseInt(currentId, 10) ? { ...item, ...newItem } : item
 			)
 		);
 
-		setNewTodo({
-			id: new Date().getTime(),
-			status: 0,
-			title: '',
-			description: '',
-			startDate: '',
-			endDate: '',
-			logicalDeleted: false,
-		});
-
-		navigate("/");
+		setNewItem({});
+		navigate(`/${type}`);
 	};
 
 	// 削除処理
-	const handleLogicalDeleteTodo = (e: React.FormEvent): void => {
+	const handleLogicalDelete: MouseEventHandler<HTMLButtonElement> = (e) => {
 		e.preventDefault();
-		if (!todoId) return;
+		const currentId = itemId ?? id;
+		if (!currentId) return;
 
-		setTodoList((prevTodoList) =>
-			prevTodoList.map(todo =>
-				todo.id === parseInt(todoId, 10) ? { ...todo, logicalDeleted: !todo.logicalDeleted } : todo
+		setList((prevList) =>
+			prevList.map(item =>
+				item.id === parseInt(currentId, 10) ? { ...item, logicalDeleted: !item.logicalDeleted } : item
 			)
 		);
 
-		navigate("/");
-	}
+		navigate(`/${type}`);
+	};
 
-	return { handleChangeTodo, handleAddTodo, handleEditTodo, handleLogicalDeleteTodo };
+	return { handleChange, handleAdd, handleEdit, handleLogicalDelete };
 };
 
 export default useController;
